@@ -4,21 +4,39 @@ import { Container, Pagination, TextField, Stack, Link } from "@mui/material";
 
 const BASE_URL = `http://hn.algolia.com/api/v1/search?`;
 
+const useDelay = (req, ms = 500) => {
+  const [query, setQuery] = useState(req);
+
+  useEffect(() => {
+    const id = setTimeout(() => setQuery(req), ms);
+
+    return () => clearTimeout(id);
+  }, [ms, req]);
+
+  return query;
+};
+
 function App() {
   const [posts, setPost] = useState([]);
   const [query, setQuery] = useState("react");
   const [page, setPage] = useState(1);
-  const [pageQty, setPageQty] = useState(0); // max count pages
+  const [pageQty, setPageQty] = useState(0);
+  // max count pages
+  const delayQuery = useDelay(query);
 
-  console.log(`page: `, page);
+  const handleChangeQuery = ({ target }) => {
+    setQuery(target.value);
+    setPage(1);
+  };
 
   useEffect(() => {
-    axios.get(BASE_URL + `query=${query}&page=${page - 1}`).then(({ data }) => {
-      console.log(data);
-      setPost(data.hits);
-      setPageQty(data.nbPages);
-    });
-  }, [query, page]);
+    axios
+      .get(BASE_URL + `query=${delayQuery}&page=${page - 1}`)
+      .then(({ data }) => {
+        setPost(data.hits);
+        setPageQty(data.nbPages);
+      });
+  }, [delayQuery, page]);
 
   return (
     <Container className="App" sx={{ mt: 3 }}>
@@ -26,10 +44,7 @@ function App() {
         fullWidth
         label="query"
         value={query}
-        onChange={({ target }) => {
-          setQuery(target.value);
-          setPage(1);
-        }}
+        onChange={handleChangeQuery}
       />
 
       <Stack spacing={2} sx={{ mt: 2 }}>
