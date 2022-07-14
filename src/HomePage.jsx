@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Container, Pagination, TextField, Stack, Link } from "@mui/material";
+import {
+  Pagination,
+  TextField,
+  Stack,
+  Link,
+  PaginationItem,
+} from "@mui/material";
+import { Link as NavLink } from "react-router-dom";
 
 const BASE_URL = `http://hn.algolia.com/api/v1/search?`;
 
@@ -16,7 +23,7 @@ const useDelay = (req, ms = 500) => {
   return query;
 };
 
-export const HomePage = () => {
+export const HomePage = (props) => {
   const [posts, setPost] = useState([]);
   const [query, setQuery] = useState("react");
   const [page, setPage] = useState(1);
@@ -54,6 +61,13 @@ export const HomePage = () => {
             page={page}
             onChange={(_, newPage) => setPage(newPage)}
             sx={{ mx: "auto" }}
+            renderItem={(item) => (
+              <PaginationItem
+                component={NavLink}
+                to={`/?page=${item.page}`}
+                {...item}
+              />
+            )}
           />
         )}
 
