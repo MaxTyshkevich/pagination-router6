@@ -7,11 +7,7 @@ import {
   Link,
   PaginationItem,
 } from "@mui/material";
-import {
-  Link as NavLink,
-  useLocation,
-  useSearchParams,
-} from "react-router-dom";
+import { Link as NavLink, useSearchParams } from "react-router-dom";
 
 const BASE_URL = `http://hn.algolia.com/api/v1/search?`;
 
@@ -29,19 +25,24 @@ const useDelay = (req, ms = 500) => {
 
 export const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  console.log(`searchParams : `, searchParams.get("page"));
 
   const [posts, setPost] = useState([]);
-  const [query, setQuery] = useState(searchParams.get("query"));
-  const [page, setPage] = useState(parseInt(searchParams.get("page")));
+  const [query, setQuery] = useState(searchParams.get("query") || "");
+  const [page, setPage] = useState(parseInt(searchParams.get("page") || 1));
   const [pageQty, setPageQty] = useState(0);
   // max count pages
   const delayQuery = useDelay(query);
 
   const handleChangeQuery = ({ target }) => {
-    setQuery(target.value);
+    const newQuery = target.value;
     setPage(1);
-    setSearchParams({ page, query: target.value });
+    setQuery(target.value);
+
+    if (newQuery) {
+      setSearchParams({ page: 1, query: target.value });
+    } else {
+      setSearchParams({ page: 1 });
+    }
   };
 
   useEffect(() => {
