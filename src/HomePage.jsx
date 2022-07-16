@@ -68,12 +68,16 @@ export const HomePage = () => {
           <Pagination
             count={pageQty}
             page={page}
-            onChange={(_, newPage) => setPage(newPage)}
+            onChange={(_, page) => {
+              setPage(page);
+              setSearchParams({ page, query });
+            }}
             sx={{ mx: "auto" }}
             renderItem={(item) => (
               <PaginationItem
-                component={NavLink}
-                to={`/?page=${item.page}&query=${query}`}
+                /* component={NavLink}
+                to={`/?page=${item.page}&query=${query}`} */
+
                 {...item}
               />
             )}
